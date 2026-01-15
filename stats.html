@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistiques 2026</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+    <div class="container my-5" style="max-width: 950px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="index.html" class="btn btn-outline-secondary">← Retour</a>
+            <h1 class="mb-0">Calendrier 2026</h1>
+            <div class="badge bg-fire fs-5" id="streakBadge">🔥 0 Jours</div>
+        </div>
+
+        <div class="card shadow-sm border-0 p-4 overflow-auto">
+            <div class="heatmap-wrapper">
+                <div class="month-labels d-flex mb-1 text-muted small px-1">
+                    <span style="flex:1">Jan</span><span style="flex:1">Fév</span><span style="flex:1">Mar</span>
+                    <span style="flex:1">Avr</span><span style="flex:1">Mai</span><span style="flex:1">Juin</span>
+                    <span style="flex:1">Juil</span><span style="flex:1">Août</span><span style="flex:1">Sept</span>
+                    <span style="flex:1">Oct</span><span style="flex:1">Nov</span><span style="flex:1">Déc</span>
+                </div>
+                <div class="heatmap-year" id="heatmapYear"></div>
+            </div>
+            <div class="d-flex justify-content-end align-items-center mt-3 gap-2 small text-muted">
+                <span>Moins</span>
+                <div class="sq level-0"></div><div class="sq level-1"></div>
+                <div class="sq level-2"></div><div class="sq level-3"></div>
+                <div class="sq level-4"></div>
+                <span>Plus</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        const stats = JSON.parse(localStorage.getItem("flash_stats")) || {};
+        const getLocalDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        function render() {
+            const container = document.getElementById("heatmapYear");
+            const start = new Date(2026, 0, 1);
+            const end = new Date(2026, 11, 31);
+            const today = new Date();
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                const ds = getLocalDate(d);
+                const count = stats[ds] || 0;
+                const level = count > 15 ? 4 : count > 8 ? 3 : count > 4 ? 2 : count > 0 ? 1 : 0;
+                const sq = document.createElement("div");
+                sq.className = `sq level-${level}`;
+                if (d > today) sq.style.opacity = "0.2";
+                sq.title = `${ds} : ${count} révisions`;
+                container.appendChild(sq);
+            }
+        }
+        let streak = 0, curr = new Date();
+        if(!stats[getLocalDate(curr)]) curr.setDate(curr.getDate() - 1);
+        while(stats[getLocalDate(curr)]) { streak++; curr.setDate(curr.getDate() - 1); }
+        document.getElementById("streakBadge").innerText = `🔥 ${streak} Jours`;
+        if(localStorage.getItem("dark") === "true") document.body.classList.add("dark-mode");
+        render();
+    </script>
+</body>
+</html>
