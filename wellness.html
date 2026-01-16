@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Journey 2026</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container my-5" style="max-width: 1000px;">
+        
+        <div class="d-flex justify-content-between align-items-center mb-5 reveal">
+            <a href="index.html" class="btn btn-sm btn-outline-secondary rounded-pill px-3">← Dashboard</a>
+            <div id="streakBadge" class="bg-fire">🔥 0 JOURS</div>
+        </div>
+
+        <div class="text-center mb-5 reveal delay-1">
+            <h2 class="fw-800 mb-2">Comment te sens-tu ?</h2>
+            <p class="text-muted">Valide ton énergie pour colorer ton année.</p>
+        </div>
+
+        <div class="card p-5 border-0 shadow-lg mb-5 reveal delay-2 text-center">
+            <div class="d-flex justify-content-center gap-4 mb-5">
+                <div class="mood-vibe" onclick="selectVibe('🤩', '#10b981', 'Incroyable', this)">
+                    <span class="vibe-emoji">🤩</span>
+                    <span class="vibe-text">Top</span>
+                </div>
+                <div class="mood-vibe" onclick="selectVibe('😊', '#6366f1', 'Bien', this)">
+                    <span class="vibe-emoji">😊</span>
+                    <span class="vibe-text">Bien</span>
+                </div>
+                <div class="mood-vibe active" onclick="selectVibe('😐', '#94a3b8', 'Neutre', this)">
+                    <span class="vibe-emoji">😐</span>
+                    <span class="vibe-text">Neutre</span>
+                </div>
+                <div class="mood-vibe" onclick="selectVibe('😔', '#f59e0b', 'Bof', this)">
+                    <span class="vibe-emoji">😔</span>
+                    <span class="vibe-text">Bof</span>
+                </div>
+                <div class="mood-vibe" onclick="selectVibe('😫', '#ef4444', 'Dur', this)">
+                    <span class="vibe-emoji">😫</span>
+                    <span class="vibe-text">Dur</span>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <input type="text" id="gratitudeInput" class="form-control form-control-lg border-0 bg-light text-center rounded-4 mb-4" placeholder="Une petite victoire aujourd'hui ?">
+                    <button class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-primary" onclick="validateVibe()">
+                        VALIDER L'ÉNERGIE ✨
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-4 border-0 shadow-sm reveal delay-3">
+            <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+                <h6 class="fw-800 text-uppercase m-0">Mon Année 2026</h6>
+                <div class="d-flex gap-2">
+                    <div class="sq-dot" style="background:#10b981"></div>
+                    <div class="sq-dot" style="background:#6366f1"></div>
+                    <div class="sq-dot" style="background:#94a3b8"></div>
+                    <div class="sq-dot" style="background:#f59e0b"></div>
+                    <div class="sq-dot" style="background:#ef4444"></div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-center overflow-auto py-2">
+                <div id="yearGrid" class="year-grid-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wellness.js"></script>
+</body>
+</html>
