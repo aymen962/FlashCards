@@ -24,6 +24,8 @@
 
             <div class="d-grid gap-3">
                 <button id="startBtn" class="btn btn-success btn-lg rounded-pill py-3 shadow" onclick="toggleTimer()">🚀 Démarrer</button>
+                
+                <button id="discountBtn" class="btn btn-outline-warning btn-sm rounded-pill" onclick="applyDiscount()">🎁 Réduire de 5 min (-5m)</button>
             </div>
         </div>
 
@@ -31,8 +33,6 @@
             <p id="motivationalText">Commencez à étudier pour monter en grade !</p>
         </div>
     </div>
-
-    <script src="script.js"></script>
 
     <script>
         const getFormatDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -61,6 +61,9 @@
                 totalSeconds += elapsedSinceStart;
             }
 
+            // Sécurité : pas de temps négatif
+            if (totalSeconds < 0) totalSeconds = 0;
+
             const h = Math.floor(totalSeconds / 3600);
             const m = Math.floor((totalSeconds % 3600) / 60);
             const s = totalSeconds % 60;
@@ -71,6 +74,7 @@
             const percent = Math.min((totalSeconds / max) * 100, 100);
             document.getElementById("dailyProgressBar").style.width = percent + "%";
 
+            // Mise à jour des Rangs
             const rankBadge = document.getElementById("rankBadge");
             const moto = document.getElementById("motivationalText");
             
@@ -125,7 +129,25 @@
             }
         }
 
-        // Relancer l'intervalle si déjà en cours au chargement
+        // NOUVELLE FONCTION : Appliquer la réduction (Discount)
+        function applyDiscount() {
+            const today = getFormatDate(new Date());
+            const discountValue = 300; // 300 secondes = 5 minutes
+
+            if (isRunning) {
+                // Si le timer tourne, on recule le timestamp de départ dans le passé 
+                // pour simuler que moins de temps est passé
+                let currentStart = parseInt(localStorage.getItem("timer_start_timestamp"));
+                localStorage.setItem("timer_start_timestamp", (currentStart + (discountValue * 1000)).toString());
+            } else {
+                // Si le timer est arrêté, on réduit directement les stats sauvegardées
+                tStats[today] = Math.max(0, (tStats[today] || 0) - discountValue);
+                localStorage.setItem("study_timer_stats", JSON.stringify(tStats));
+            }
+            
+            updateUI();
+        }
+
         if (isRunning) {
             const btn = document.getElementById("startBtn");
             btn.innerText = "🛑 Arrêter";
