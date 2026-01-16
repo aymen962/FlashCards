@@ -2,56 +2,60 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Flashcards 2026</title>
+    <title>Mon Espace d'Apprentissage</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body>
-    <div class="container my-4" style="max-width: 800px;">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="text-dark">🗂️ Mes Flashcards</h1>
-            <div class="d-flex gap-2">
-                <a href="stats.html" class="btn btn-outline-primary btn-sm">📊 Stats</a>
-                <button class="btn btn-outline-secondary btn-sm" onclick="toggleDarkMode()">🌙 Mode Sombre</button>
-            </div>
+    <div class="container my-5" style="max-width: 900px;">
+        <div class="mb-5">
+            <h1 class="display-5 fw-bold text-dark">Tableau de Bord Personnel</h1>
+            <p class="text-muted">Gérez vos révisions et votre productivité.</p>
         </div>
 
-        <div class="card mb-4 shadow-sm border-0 text-center p-3">
-            <div class="d-flex justify-content-around">
-                <div>
+        <div class="card mb-5 shadow-sm border-0 text-center p-4">
+            <div class="row">
+                <div class="col-md-6 border-end">
                     <h3 class="text-dark" id="streakBadge">🔥 0</h3>
-                    <small class="text-muted">Série Actuelle</small>
+                    <small class="text-muted text-uppercase fw-bold">Série Quiz</small>
                 </div>
-                <div>
-                    <h3 class="text-dark" id="maxStreakBadge">🏆 0</h3>
-                    <small class="text-muted">Record Max</small>
-                </div>
-                <div>
-                    <h3 class="text-dark" id="totalSections">0</h3>
-                    <small class="text-muted">Sujets</small>
+                <div class="col-md-6">
+                    <h3 class="text-dark" id="timerMaxBadge">0h</h3>
+                    <small class="text-muted text-uppercase fw-bold">Record Étude</small>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow-sm border-0 mb-4 p-3">
-            <h6 class="fw-bold text-dark">Nouveau Sujet</h6>
-            <div class="row g-2">
-                <div class="col-md-7"><input type="text" id="secName" class="form-control" placeholder="Nom du sujet"></div>
-                <div class="col-md-2"><input type="color" id="secColor" class="form-control form-control-color w-100" value="#6366f1"></div>
-                <div class="col-md-3"><button class="btn btn-success w-100" onclick="addSection()">Créer</button></div>
+        <div class="row g-4 text-center">
+            <div class="col-md-6">
+                <a href="flashcards.html" class="card h-100 border-0 shadow-sm p-4 text-decoration-none">
+                    <div class="fs-1">🗂️</div>
+                    <h4 class="text-dark mt-2">Flashcards</h4>
+                    <p class="small text-muted">Gérez vos sujets et vos cartes.</p>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="timer.html" class="card h-100 border-0 shadow-sm p-4 text-decoration-none">
+                    <div class="fs-1">⏱️</div>
+                    <h4 class="text-dark mt-2">Focus Timer</h4>
+                    <p class="small text-muted">Restez concentré.</p>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="todo.html" class="card h-100 border-0 shadow-sm p-4 text-decoration-none">
+                    <div class="fs-1">🎯</div>
+                    <h4 class="text-dark mt-2">Objectifs</h4>
+                    <p class="small text-muted">Liste des tâches.</p>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="stats.html" class="card h-100 border-0 shadow-sm p-4 text-decoration-none">
+                    <div class="fs-1">📊</div>
+                    <h4 class="text-dark mt-2">Analyses</h4>
+                    <p class="small text-muted">Suivez vos progrès.</p>
+                </a>
             </div>
         </div>
-
-        <div class="card shadow-sm border-0 mb-4 p-3">
-            <h6 class="fw-bold text-dark">Ajouter des Cartes (Format: Q, R)</h6>
-            <select id="multiSecSelect" class="form-select mb-2"></select>
-            <textarea id="multiCards" class="form-control mb-2" rows="2" placeholder="Question, Réponse"></textarea>
-            <button class="btn btn-primary w-100" onclick="addMultipleCards()">Importer les cartes</button>
-        </div>
-
-        <h4 class="mb-3 text-dark">Mes Progrès</h4>
-        <div id="sectionList" class="row g-3"></div>
     </div>
     <script src="script.js"></script>
 </body>

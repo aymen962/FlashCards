@@ -1,15 +1,22 @@
+// --- INITIALISATION DES DONNÉES ---
 let data = JSON.parse(localStorage.getItem("flash")) || [];
 let stats = JSON.parse(localStorage.getItem("flash_stats")) || {};
 
+// Utilitaire pour obtenir la date au format YYYY-MM-DD
 const getLocalDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
+// --- LOGIQUE DES FLASHCARDS ---
 function save() {
     localStorage.setItem("flash", JSON.stringify(data));
-    showSections();
-    refreshMultiSelect();
+    // Rafraîchir l'interface si les éléments existent sur la page actuelle
+    if (document.getElementById("sectionList")) {
+        showSections();
+    }
+    if (document.getElementById("multiSecSelect")) {
+        refreshMultiSelect();
+    }
 }
 
-// --- LOGIQUE DES EMOJIS ---
 function getProgressEmoji(percent) {
     if (percent === 0) return "🌑";
     if (percent < 25) return "🌱";
@@ -18,7 +25,6 @@ function getProgressEmoji(percent) {
     return "👑";
 }
 
-// --- AFFICHAGE DES SECTIONS ---
 function showSections() {
     const listDiv = document.getElementById("sectionList");
     if(!listDiv) return;
@@ -27,15 +33,14 @@ function showSections() {
     data.forEach((sec, i) => {
         const total = sec.cards.length;
         const currentPoints = sec.cards.reduce((acc, c) => acc + ((c.level || 1) - 1), 0);
-        const maxPoints = total * 4; 
-        const percent = total > 0 ? Math.round((currentPoints / maxPoints) * 100) : 0;
+        const percent = total > 0 ? Math.round((currentPoints / (total * 4)) * 100) : 0;
         const emoji = getProgressEmoji(percent);
 
         const col = document.createElement("div");
         col.className = "col-md-6 drag-item";
         col.setAttribute("data-id", i);
         col.innerHTML = `
-            <div class="card border-0 shadow-sm" style="border-left: 6px solid ${sec.color}; background: white; cursor: grab;">
+            <div class="card border-0 shadow-sm mb-3" style="border-left: 6px solid ${sec.color} !important;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <h6 class="mb-0 fw-bold text-dark">${emoji} ${sec.name}</h6>
@@ -45,25 +50,27 @@ function showSections() {
                             <button onclick="deleteSection(${i})" class="btn btn-sm btn-outline-danger">×</button>
                         </div>
                     </div>
-                    <div class="progress" style="height: 8px; background: #eee; border-radius: 10px;">
-                        <div class="progress-bar progress-bar-striped" style="width: ${percent}%; background: ${sec.color}"></div>
+                    <div class="progress" style="height: 8px; background: rgba(0,0,0,0.05); border-radius: 10px;">
+                        <div class="progress-bar" style="width: ${percent}%; background: ${sec.color}"></div>
                     </div>
-                    <div class="d-flex justify-content-between mt-1 small text-muted" style="font-size: 0.75rem;">
+                    <div class="d-flex justify-content-between mt-1 small text-muted">
                         <span>${total} cartes</span>
-                        <span class="text-dark fw-bold">${percent}% Maîtrise</span>
+                        <span class="fw-bold text-dark">${percent}%</span>
                     </div>
                 </div>
             </div>`;
         listDiv.appendChild(col);
     });
-    document.getElementById("totalSections").innerText = data.length;
+    
+    if(document.getElementById("totalSectionsDisplay")) {
+        document.getElementById("totalSectionsDisplay").innerText = data.length + " Sujets";
+    }
     initSortable();
 }
 
-// --- DRAG AND DROP ---
 function initSortable() {
     const el = document.getElementById('sectionList');
-    if (!el) return;
+    if (!el || typeof Sortable === 'undefined') return;
     Sortable.create(el, {
         animation: 150,
         onEnd: function () {
@@ -73,37 +80,53 @@ function initSortable() {
             data = newData;
             localStorage.setItem("flash", JSON.stringify(data));
             showSections();
-            refreshMultiSelect();
         }
     });
 }
 
-// --- STATS / STREAKS ---
+// --- STATISTIQUES ---
 function calculateStreaks() {
     let currentStreak = 0;
-    let maxStreak = parseInt(localStorage.getItem("max_streak")) || 0;
     let curr = new Date();
+    // Si pas de stats aujourd'hui, on regarde hier
     if (!stats[getLocalDate(curr)]) curr.setDate(curr.getDate() - 1);
-    while(stats[getLocalDate(curr)]) { currentStreak++; curr.setDate(curr.getDate() - 1); }
-    if (currentStreak > maxStreak) { maxStreak = currentStreak; localStorage.setItem("max_streak", maxStreak); }
-    document.getElementById("streakBadge").innerText = `🔥 ${currentStreak}`;
-    document.getElementById("maxStreakBadge").innerText = `🏆 ${maxStreak}`;
+    while(stats[getLocalDate(curr)]) { 
+        currentStreak++; 
+        curr.setDate(curr.getDate() - 1); 
+    }
+    
+    if(document.getElementById("streakBadge")) {
+        document.getElementById("streakBadge").innerText = `🔥 ${currentStreak}`;
+    }
+
+    let maxStudySeconds = parseInt(localStorage.getItem("study_max_time")) || 0;
+    if(document.getElementById("timerMaxBadge")) {
+        const h = Math.floor(maxStudySeconds / 3600);
+        const m = Math.floor((maxStudySeconds % 3600) / 60);
+        document.getElementById("timerMaxBadge").innerText = h > 0 ? `${h}h${m}` : `${m}m`;
+    }
 }
 
-// --- ACTIONS ---
+// --- GESTION DES SUJETS ---
 function addSection() {
-    const name = document.getElementById("secName").value.trim();
-    const color = document.getElementById("secColor").value;
+    const nameInput = document.getElementById("secName");
+    const colorInput = document.getElementById("secColor");
+    if (!nameInput) return;
+    
+    const name = nameInput.value.trim();
+    const color = colorInput.value;
+    
     if (!name) return;
     data.push({ name, color, cards: [] });
     save();
-    document.getElementById("secName").value = "";
+    nameInput.value = "";
 }
 
 function addMultipleCards() {
     const idx = document.getElementById("multiSecSelect").value;
     const text = document.getElementById("multiCards").value;
     if (!text || idx === "") return;
+    
     text.split("\n").forEach(line => {
         const parts = line.split(",");
         if (parts.length >= 2) {
@@ -114,7 +137,12 @@ function addMultipleCards() {
     save();
 }
 
-function deleteSection(i) { if(confirm("Supprimer ce sujet ?")) { data.splice(i, 1); save(); } }
+function deleteSection(i) { 
+    if(confirm("Supprimer ce sujet et toutes ses cartes ?")) { 
+        data.splice(i, 1); 
+        save(); 
+    } 
+}
 
 function resetSection(i) {
     if(confirm(`Réinitialiser la progression de "${data[i].name}" ?`)) {
@@ -125,18 +153,52 @@ function resetSection(i) {
 
 function refreshMultiSelect() {
     const s = document.getElementById("multiSecSelect");
-    if(s) s.innerHTML = data.map((sec, i) => `<option value="${i}">${sec.name}</option>`).join("");
+    if(s) {
+        s.innerHTML = data.map((sec, i) => `<option value="${i}">${sec.name}</option>`).join("");
+    }
 }
 
-function toggleDarkMode() {
-    const isDark = document.body.classList.toggle("dark-mode");
-    localStorage.setItem("dark", isDark);
+// --- ASSISTANT ---
+const motivationPhrases = [
+    "2 minutes de travail ! Tu es sur la bonne voie ! 💪",
+    "La persévérance paie toujours. Continue ! ✨",
+    "Tu fais des progrès incroyables aujourd'hui ! 🔥",
+    "Reste concentré, tu y es presque ! 🧠",
+    "N'oublie pas : chaque petit pas compte. 🏆"
+];
+
+function initAssistant() {
+    if (document.querySelector('.assistant-container')) return;
+    const container = document.createElement('div');
+    container.className = 'assistant-container';
+    container.innerHTML = `
+        <div class="assistant-bubble" id="assistantBubble" style="display: none;"></div>
+        <div class="assistant-avatar" onclick="toggleAssistantBubble()">🤖</div>
+    `;
+    document.body.appendChild(container);
 }
 
-// --- INITIALISATION ---
-window.onload = () => {
-    if(localStorage.getItem("dark") === "true") document.body.classList.add("dark-mode");
-    showSections();
-    refreshMultiSelect();
+function toggleAssistantBubble() {
+    const b = document.getElementById("assistantBubble");
+    if (b.style.display === "none" || b.style.display === "") {
+        b.innerText = motivationPhrases[Math.floor(Math.random() * motivationPhrases.length)];
+        b.style.display = "block";
+    } else {
+        b.style.display = "none";
+    }
+}
+
+// --- INITIALISATION AU CHARGEMENT ---
+function init() {
+    initAssistant();
     calculateStreaks();
-};
+
+    if (document.getElementById("sectionList")) {
+        showSections();
+    }
+    if (document.getElementById("multiSecSelect")) {
+        refreshMultiSelect();
+    }
+}
+
+window.addEventListener('DOMContentLoaded', init);

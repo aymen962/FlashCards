@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Focus Timer - 2026</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+    <div class="container my-5" style="max-width: 600px;">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <a href="index.html" class="btn btn-outline-secondary">← Retour</a>
+            <h4 class="fw-bold mb-0 text-dark">Focus Mode</h4>
+            <div style="width: 80px;"></div>
+        </div>
+
+        <div class="card shadow-lg border-0 p-5 text-center mb-4" style="border-radius: 30px;">
+            <div id="rankBadge" class="badge bg-secondary mb-3 py-2 px-3 rounded-pill" style="font-size: 0.9rem;">Rang : Noob 🤡</div>
+            <h1 class="display-1 fw-bold mb-3 text-dark" id="timerDisplay">00:00:00</h1>
+            
+            <div class="progress mb-4" style="height: 12px; border-radius: 10px; background-color: #eee;">
+                <div id="dailyProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%"></div>
+            </div>
+
+            <div class="d-grid gap-3">
+                <button id="startBtn" class="btn btn-success btn-lg rounded-pill py-3 shadow" onclick="toggleTimer()">🚀 Démarrer</button>
+            </div>
+        </div>
+
+        <div class="text-center text-muted small">
+            <p id="motivationalText">Commencez à étudier pour monter en grade !</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <script>
+        const getFormatDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        
+        let tStats = JSON.parse(localStorage.getItem("study_timer_stats")) || {};
+        let isRunning = localStorage.getItem("timer_running") === "true";
+        let timerInterval;
+
+        function updateUI() {
+            const today = getFormatDate(new Date());
+            
+            // Reset automatique si on change de jour
+            const lastSavedDate = localStorage.getItem("timer_last_date");
+            if (lastSavedDate && lastSavedDate !== today) {
+                tStats[today] = 0;
+                localStorage.setItem("timer_last_date", today);
+            }
+
+            if (!tStats[today]) tStats[today] = 0;
+            
+            let totalSeconds = tStats[today];
+            
+            if (isRunning) {
+                const startTime = parseInt(localStorage.getItem("timer_start_timestamp"));
+                const elapsedSinceStart = Math.floor((Date.now() - startTime) / 1000);
+                totalSeconds += elapsedSinceStart;
+            }
+
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+            document.getElementById("timerDisplay").innerText = 
+                `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            
+            const max = Math.max(parseInt(localStorage.getItem("study_max_time")) || 0, 3600);
+            const percent = Math.min((totalSeconds / max) * 100, 100);
+            document.getElementById("dailyProgressBar").style.width = percent + "%";
+
+            const rankBadge = document.getElementById("rankBadge");
+            const moto = document.getElementById("motivationalText");
+            
+            if(totalSeconds < 600) { 
+                rankBadge.innerText = "Rang : Noob 🤡"; 
+                rankBadge.className="badge bg-secondary mb-3 py-2 rounded-pill"; 
+                moto.innerText="Encore un effort pour devenir Apprenti !"; 
+            } else if(totalSeconds < 3600) { 
+                rankBadge.innerText = "Rang : Apprenti 📜"; 
+                rankBadge.className="badge bg-info mb-3 py-2 rounded-pill"; 
+                moto.innerText="Vous commencez à être sérieux !"; 
+            } else if(totalSeconds < 10800) { 
+                rankBadge.innerText = "Rang : Expert 🔥"; 
+                rankBadge.className="badge bg-warning text-dark mb-3 py-2 rounded-pill"; 
+                moto.innerText="Quelle concentration ! Continuez !"; 
+            } else { 
+                rankBadge.innerText = "Rang : Maître 👑"; 
+                rankBadge.className="badge bg-danger mb-3 py-2 rounded-pill"; 
+                moto.innerText="Niveau légendaire atteint !"; 
+            }
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById("startBtn");
+            const today = getFormatDate(new Date());
+
+            if (!isRunning) {
+                isRunning = true;
+                localStorage.setItem("timer_running", "true");
+                localStorage.setItem("timer_start_timestamp", Date.now().toString());
+                localStorage.setItem("timer_last_date", today);
+                btn.innerText = "🛑 Arrêter";
+                btn.classList.replace("btn-success", "btn-danger");
+                timerInterval = setInterval(updateUI, 1000);
+            } else {
+                isRunning = false;
+                const startTime = parseInt(localStorage.getItem("timer_start_timestamp"));
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                
+                tStats[today] = (tStats[today] || 0) + elapsed;
+                
+                localStorage.setItem("timer_running", "false");
+                localStorage.setItem("study_timer_stats", JSON.stringify(tStats));
+                
+                let max = parseInt(localStorage.getItem("study_max_time")) || 0;
+                if (tStats[today] > max) localStorage.setItem("study_max_time", tStats[today]);
+
+                btn.innerText = "🚀 Démarrer";
+                btn.classList.replace("btn-danger", "btn-success");
+                clearInterval(timerInterval);
+                updateUI();
+            }
+        }
+
+        // Relancer l'intervalle si déjà en cours au chargement
+        if (isRunning) {
+            const btn = document.getElementById("startBtn");
+            btn.innerText = "🛑 Arrêter";
+            btn.classList.replace("btn-success", "btn-danger");
+            timerInterval = setInterval(updateUI, 1000);
+        }
+        
+        updateUI();
+    </script>
+</body>
+</html>
