@@ -2,38 +2,41 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz - Focus</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-light">
     <div class="container my-5" style="max-width: 600px;">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <a href="index.html" class="btn btn-sm btn-outline-secondary shadow-sm" style="border-radius: 10px;">← Quitter</a>
-            <h4 id="title" class="fw-bold mb-0 text-dark">Révision</h4>
-            <div style="width: 80px;"></div> </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-5 reveal">
+            <a href="flashcards.html" class="btn btn-sm btn-outline-secondary hover-lift" style="border-radius: 12px; padding: 8px 16px;">
+                ← Quitter
+            </a>
+            <h4 id="title" class="fw-800 mb-0 text-dark">Révision</h4>
+            <div style="width: 80px;"></div> 
+        </div>
 
-        <div class="flashcard-container mx-auto">
-            <div class="flashcard-inner shadow-lg" id="flashcard" onclick="flipCard()">
-                <div class="flashcard-front d-flex align-items-center justify-content-center p-4" id="cardFront">
-                    </div>
-                <div class="flashcard-back d-flex align-items-center justify-content-center p-4" id="cardBack">
-                    </div>
+        <div class="flashcard-container mx-auto reveal delay-1">
+            <div class="flashcard-inner" id="flashcard" onclick="flipCard()">
+                <div class="flashcard-front d-flex align-items-center justify-content-center" id="cardFront"></div>
+                <div class="flashcard-back d-flex align-items-center justify-content-center" id="cardBack"></div>
             </div>
         </div>
 
-        <div class="mt-5">
-            <div class="progress" style="height: 10px; border-radius: 20px; background-color: #e9ecef;">
+        <div class="mt-5 reveal delay-2">
+            <div class="progress" style="height: 12px; border-radius: 20px; background-color: rgba(0,0,0,0.05);">
                 <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%; border-radius: 20px;"></div>
             </div>
-            <p id="progressText" class="text-center mt-2 small text-muted fw-bold text-uppercase" style="letter-spacing: 1px;"></p>
+            <p id="progressText" class="text-center mt-3 small text-muted fw-bold text-uppercase" style="letter-spacing: 2px;"></p>
         </div>
 
-        <div class="d-flex justify-content-center gap-4 mt-4">
-            <button class="btn btn-danger btn-lg rounded-pill shadow px-5 py-3 fw-bold" onclick="handleAnswer(false)">
+        <div class="d-flex justify-content-center gap-4 mt-4 reveal delay-3">
+            <button class="btn btn-danger btn-lg shadow hover-lift" onclick="handleAnswer(false)" style="min-width: 160px;">
                 ❌ Oublié
             </button>
-            <button class="btn btn-success btn-lg rounded-pill shadow px-5 py-3 fw-bold" onclick="handleAnswer(true)">
+            <button class="btn btn-success btn-lg shadow hover-lift" onclick="handleAnswer(true)" style="min-width: 160px;">
                 ✅ Connu
             </button>
         </div>

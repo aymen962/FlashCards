@@ -2,61 +2,76 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mon Espace d'Apprentissage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Apprentissage</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container my-5" style="max-width: 900px;">
-        <div class="mb-5">
-            <h1 class="display-5 fw-bold text-dark">Tableau de Bord Personnel</h1>
-            <p class="text-muted">Gérez vos révisions et votre productivité.</p>
-        </div>
-
-        <div class="card mb-5 shadow-sm border-0 text-center p-4">
-            <div class="row">
-                <div class="col-md-6 border-end">
-                    <h3 class="text-dark" id="streakBadge">🔥 0</h3>
-                    <small class="text-muted text-uppercase fw-bold">Série Quiz</small>
+    <div class="container py-5" style="max-width: 900px;">
+        <header class="mb-5 reveal">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="fw-800 display-4">Bonjour ! 👋</h1>
+                    <p class="text-muted fs-5">Prêt pour une nouvelle session de focus ?</p>
                 </div>
-                <div class="col-md-6">
-                    <h3 class="text-dark" id="timerMaxBadge">0h</h3>
-                    <small class="text-muted text-uppercase fw-bold">Record Étude</small>
+                <div class="text-end">
+                    <p id="currentDate" class="fw-bold text-uppercase small tracking-wider text-muted mb-0"></p>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <div class="row g-4 text-center">
-            <div class="col-md-6">
-                <a href="flashcards.html" class="card h-100 border-0 shadow-sm p-4 text-decoration-none">
-                    <div class="fs-1">🗂️</div>
-                    <h4 class="text-dark mt-2">Flashcards</h4>
-                    <p class="small text-muted">Gérez vos sujets et vos cartes.</p>
+        <section class="row g-4 mb-5">
+            <div class="col-md-6 reveal delay-1">
+                <div class="card p-4 h-100 text-center border-0">
+                    <h2 class="display-5" id="streakBadge">🔥 0</h2>
+                    <span class="text-muted fw-bold small text-uppercase ls-1">Série Actuelle</span>
+                </div>
+            </div>
+            <div class="col-md-6 reveal delay-1">
+                <div class="card p-4 h-100 text-center border-0">
+                    <h2 class="display-5" id="timerMaxBadge">0h</h2>
+                    <span class="text-muted fw-bold small text-uppercase ls-1">Record d'étude</span>
+                </div>
+            </div>
+        </section>
+
+        <nav class="row g-4">
+            <div class="col-6 col-md-3 reveal delay-2">
+                <a href="flashcards.html" class="card p-4 text-center text-decoration-none h-100">
+                    <div class="display-6 mb-2">🗂️</div>
+                    <span class="fw-bold text-dark">Cartes</span>
                 </a>
             </div>
-            <div class="col-md-6">
-                <a href="timer.html" class="card h-100 border-0 shadow-sm p-4 text-decoration-none">
-                    <div class="fs-1">⏱️</div>
-                    <h4 class="text-dark mt-2">Focus Timer</h4>
-                    <p class="small text-muted">Restez concentré.</p>
+            <div class="col-6 col-md-3 reveal delay-3">
+                <a href="timer.html" class="card p-4 text-center text-decoration-none h-100">
+                    <div class="display-6 mb-2">⏱️</div>
+                    <span class="fw-bold text-dark">Timer</span>
                 </a>
             </div>
-            <div class="col-md-6">
-                <a href="todo.html" class="card h-100 border-0 shadow-sm p-4 text-decoration-none">
-                    <div class="fs-1">🎯</div>
-                    <h4 class="text-dark mt-2">Objectifs</h4>
-                    <p class="small text-muted">Liste des tâches.</p>
+            <div class="col-6 col-md-3 reveal delay-4">
+                <a href="todo.html" class="card p-4 text-center text-decoration-none h-100">
+                    <div class="display-6 mb-2">🎯</div>
+                    <span class="fw-bold text-dark">Objectifs</span>
                 </a>
             </div>
-            <div class="col-md-6">
-                <a href="stats.html" class="card h-100 border-0 shadow-sm p-4 text-decoration-none">
-                    <div class="fs-1">📊</div>
-                    <h4 class="text-dark mt-2">Analyses</h4>
-                    <p class="small text-muted">Suivez vos progrès.</p>
+            <div class="col-6 col-md-3 reveal delay-4">
+                <a href="stats.html" class="card p-4 text-center text-decoration-none h-100">
+                    <div class="display-6 mb-2">📊</div>
+                    <span class="fw-bold text-dark">Stats</span>
                 </a>
             </div>
-        </div>
+        </nav>
     </div>
+
     <script src="script.js"></script>
+    <script>
+        function displayDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date().toLocaleDateString('fr-FR', options);
+            document.getElementById('currentDate').textContent = today;
+        }
+        displayDate();
+    </script>
 </body>
 </html>

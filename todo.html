@@ -2,62 +2,56 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ma Liste d'Objectifs</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* Styles spécifiques à la page Todo qui ne sont pas dans style.css */
+        /* Styles spécifiques restants pour l'interaction */
         .emoji-selector-container { position: relative; }
-        .current-emoji-btn { 
-            font-size: 1.5rem; cursor: pointer; background: #f1f5f9; 
-            border: 1px solid #e2e8f0; border-radius: 50%; width: 50px; height: 50px; 
-            display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
-        }
-        .current-emoji-btn:hover { transform: scale(1.1); background: #e2e8f0; }
-
         .emoji-popover { 
-            position: absolute; top: 60px; left: 0; z-index: 1000;
-            background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            padding: 10px; display: none; grid-template-columns: repeat(5, 1fr); gap: 5px;
-            width: 220px; border: 1px solid var(--border-color);
+            position: absolute; top: 70px; left: 0; z-index: 1000;
+            background: var(--card-bg); border-radius: 15px; 
+            box-shadow: var(--shadow-soft);
+            padding: 10px; display: none; grid-template-columns: repeat(5, 1fr); gap: 8px;
+            width: 240px; border: 1px solid rgba(0,0,0,0.1);
         }
-        .emoji-option { font-size: 1.2rem; cursor: pointer; padding: 5px; text-align: center; border-radius: 8px; transition: 0.2s; }
-        .emoji-option:hover { background: #f0f2f5; transform: scale(1.2); }
-
-        .max-badge { font-size: 0.7rem; color: #94a3b8; margin-left: 5px; }
+        .emoji-option { font-size: 1.4rem; cursor: pointer; padding: 5px; text-align: center; border-radius: 10px; transition: 0.2s; }
+        .emoji-option:hover { background: var(--bg-body); transform: scale(1.2); }
+        .max-badge { font-size: 0.7rem; color: var(--text-muted); margin-left: 5px; }
     </style>
 </head>
 <body>
-    <div class="container my-5" style="max-width: 600px;">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="index.html" class="btn btn-outline-secondary btn-sm" style="border-radius: 10px;">← Retour</a>
-            <h3 class="fw-bold mb-0 text-dark">🎯 Mes Objectifs</h3>
+    <div class="container my-5" style="max-width: 650px;">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 reveal">
+            <a href="index.html" class="btn btn-outline-secondary btn-sm hover-lift" style="border-radius: 12px;">← Retour</a>
+            <h3 class="fw-800 mb-0">🎯 Mes Objectifs</h3>
         </div>
 
-        <div class="card shadow-sm border-0 p-3 mb-4">
-            <div class="progress" style="height: 12px; border-radius: 10px; background: rgba(0,0,0,0.05);">
-                <div id="todoBar" class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+        <div class="card shadow-sm border-0 p-4 mb-4 reveal delay-1">
+            <div class="progress" style="height: 14px; border-radius: 20px; background: rgba(0,0,0,0.05);">
+                <div id="todoBar" class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; border-radius: 20px;"></div>
             </div>
-            <div class="d-flex justify-content-between mt-2">
-                <small id="todoStats" class="text-muted fw-bold text-uppercase" style="font-size: 0.75rem;">0 / 0 accompli</small>
-                <small id="todoMotto" class="text-primary fw-bold" style="font-size: 0.85rem;">Prêt ? 🚀</small>
+            <div class="d-flex justify-content-between mt-3">
+                <small id="todoStats" class="text-muted fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">0 / 0 accompli</small>
+                <small id="todoMotto" class="text-primary fw-bold" style="font-size: 0.85rem;">Prêt pour la victoire ? 🚀</small>
             </div>
         </div>
 
-        <div class="card shadow-sm border-0 p-4 mb-4">
-            <div class="d-flex gap-3 align-items-center mb-3">
+        <div class="card shadow-sm border-0 p-4 mb-4 reveal delay-2">
+            <div class="d-flex gap-3 align-items-center mb-4">
                 <div class="emoji-selector-container">
                     <div class="current-emoji-btn" id="currentEmojiDisplay" onclick="toggleEmojiPicker()">🎯</div>
                     <div id="emojiPopover" class="emoji-popover"></div>
                 </div>
-                <input type="text" id="todoInput" class="form-control form-control-lg border-0 bg-light" placeholder="Nouvelle tâche..." style="border-radius: 12px;">
+                <input type="text" id="todoInput" class="form-control form-control-lg border-0 bg-light" placeholder="Quelle est la prochaine étape ?" style="border-radius: 16px; font-size: 1.1rem;">
             </div>
             
-            <div class="row g-2 align-items-center">
+            <div class="row g-3 align-items-center">
                 <div class="col-6">
-                    <select id="taskPriority" class="form-select border-0 bg-light" style="border-radius: 10px;">
+                    <select id="taskPriority" class="form-select border-0 bg-light fw-bold" style="border-radius: 12px; height: 45px;">
                         <option value="high">Urgent 🔥</option>
                         <option value="medium" selected>Normal</option>
                         <option value="low">Simple 🌱</option>
@@ -69,15 +63,16 @@
                         <label class="form-check-label small fw-bold text-muted" for="isEveryday">🔄 Quotidien</label>
                     </div>
                 </div>
-                <div class="col-12 mt-3">
-                    <button class="btn btn-primary w-100 fw-bold shadow-sm py-2" onclick="addTodo()" style="border-radius: 12px;">
-                        AJOUTER LA TÂCHE
+                <div class="col-12 mt-2">
+                    <button class="btn btn-primary btn-lg w-100 shadow-sm" onclick="addTodo()">
+                        AJOUTER À MA LISTE
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="todoList" class="d-flex flex-column gap-2"></div>
+        <div id="todoList" class="d-flex flex-column gap-3 reveal delay-3">
+            </div>
     </div>
 
     <script src="todo.js"></script>
